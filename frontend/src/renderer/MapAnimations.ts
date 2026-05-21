@@ -149,15 +149,17 @@ function drawSpeechBubble(
   wx: number, wy: number,
   text: string
 ) {
-  const fontSize = 10;
+  const fontSize = 15;
   ctx.font = `bold ${fontSize}px sans-serif`;
   const tw = ctx.measureText(text).width;
-  const pad = 5;
-  const bw = Math.max(tw + pad * 2, 32);
+  const pad = 8;
+  const bw = Math.max(tw + pad * 2, 50);
   const bh = fontSize + pad * 2;
-  const tailH = 6;
+  const tailH = 10;
+  // Extra clearance so the bubble clears the emoji which often renders above its midpoint
+  const clearance = ENTITY_SIZE * 0.65;
   const bx = wx - bw / 2;
-  const by = wy - ENTITY_SIZE / 2 - bh - tailH;
+  const by = wy - clearance - bh - tailH;
 
   ctx.save();
 
