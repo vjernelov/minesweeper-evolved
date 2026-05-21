@@ -71,13 +71,13 @@ function createOresundEntities(): Entity[] {
   const se = ['HALLÅ DÄR!', 'SKÅL! 🍺', 'JÄTTEBRA!', 'NEJ NEJ NEJ!', 'LAGOM!', 'AHH!'];
   return [
     // Danish Vikings — east edge of Denmark coastline
-    mkEntity('🧔', T(16), T(26), dk, VIKING_IMG),
-    mkEntity('🧔', T(14), T(34), dk, VIKING_IMG),
-    mkEntity('🧔', T(17), T(40), dk, VIKING_IMG),
+    mkEntity('🧔', T(8), T(26), dk, VIKING_IMG),
+    mkEntity('🧔', T(8), T(34), dk, VIKING_IMG),
+    mkEntity('🧔', T(8), T(40), dk, VIKING_IMG),
     // Swedish Vikings — west edge of Sweden coastline
-    mkEntity('🧔', T(45), T(26), se, VIKING_IMG),
-    mkEntity('🧔', T(46), T(34), se, VIKING_IMG),
-    mkEntity('🧔', T(43), T(40), se, VIKING_IMG),
+    mkEntity('🧔', T(55), T(26), se, VIKING_IMG),
+    mkEntity('🧔', T(55), T(34), se, VIKING_IMG),
+    mkEntity('🧔', T(55), T(40), se, VIKING_IMG),
   ];
 }
 
