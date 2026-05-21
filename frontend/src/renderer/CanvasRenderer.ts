@@ -73,9 +73,27 @@ export function renderGame(rc: RenderContext, state: GameState): void {
       const px = x * TILE_SIZE;
       const py = y * TILE_SIZE;
 
-      drawTile(ctx, cell, px, py, x === hoverX && y === hoverY, state.status, rc.timestamp);
+      drawTile(ctx, cell, px, py, x, y, x === hoverX && y === hoverY, state.status, rc.timestamp);
     }
   }
+
+  // Draw coastline borders — stroke only on edges where land meets sea
+  ctx.beginPath();
+  ctx.strokeStyle = '#4a7a30';
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'square';
+  for (let y = startRow; y < endRow; y++) {
+    for (let x = startCol; x < endCol; x++) {
+      if (!state.board[y][x].isLand) continue;
+      const px = x * TILE_SIZE;
+      const py = y * TILE_SIZE;
+      if (y === 0 || !state.board[y - 1][x].isLand) { ctx.moveTo(px, py); ctx.lineTo(px + TILE_SIZE, py); }
+      if (x === BOARD_SIZE - 1 || !state.board[y][x + 1].isLand) { ctx.moveTo(px + TILE_SIZE, py); ctx.lineTo(px + TILE_SIZE, py + TILE_SIZE); }
+      if (y === BOARD_SIZE - 1 || !state.board[y + 1][x].isLand) { ctx.moveTo(px, py + TILE_SIZE); ctx.lineTo(px + TILE_SIZE, py + TILE_SIZE); }
+      if (x === 0 || !state.board[y][x - 1].isLand) { ctx.moveTo(px, py); ctx.lineTo(px, py + TILE_SIZE); }
+    }
+  }
+  ctx.stroke();
 
   updateAndDrawAnimations(ctx, camera, canvas, rc.mapName, rc.timestamp);
 
@@ -85,21 +103,24 @@ export function renderGame(rc: RenderContext, state: GameState): void {
   drawMinimap(ctx, canvas, state, camera);
 }
 
-function drawTile(ctx: CanvasRenderingContext2D, cell: Cell, px: number, py: number, isHover: boolean, _status: string, timestamp: number): void {
+function landNoise(bx: number, by: number): number {
+  const n = Math.sin(bx * 127.1 + by * 311.7) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+function drawTile(ctx: CanvasRenderingContext2D, cell: Cell, px: number, py: number, bx: number, by: number, isHover: boolean, _status: string, timestamp: number): void {
   const size = TILE_SIZE;
   const padding = 1;
 
   if (cell.isLand) {
-    // Land tile
-    ctx.fillStyle = isHover ? COLORS.landDark : COLORS.land;
-    ctx.fillRect(px + padding, py + padding, size - padding * 2, size - padding * 2);
-    // Add some texture lines for land
-    ctx.strokeStyle = COLORS.landDark;
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(px + 4, py + size / 2);
-    ctx.lineTo(px + size - 4, py + size / 2 + 2);
-    ctx.stroke();
+    // Land tile — full size (no padding) so adjacent tiles merge seamlessly
+    const noise = landNoise(bx, by);
+    const darken = isHover ? 0.82 : 1;
+    const r = Math.round((107 + noise * 56) * darken);
+    const g = Math.round((156 + noise * 52) * darken);
+    const b = Math.round((79 + noise * 48) * darken);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(px, py, size, size);
   } else if (!cell.isRevealed) {
     if (cell.isFlagged) {
       // Flagged tile
