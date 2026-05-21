@@ -28,7 +28,7 @@ function loadImage(url: string): HTMLImageElement {
   return imageCache.get(url)!;
 }
 
-const VIKING_IMG = '/viking.jpg';
+const VIKING_IMG = `${import.meta.env.BASE_URL}viking.jpg`;
 
 interface Entity {
   emoji: string;
