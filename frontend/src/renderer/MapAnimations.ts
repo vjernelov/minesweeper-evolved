@@ -90,14 +90,14 @@ function createHormuzEntities(): Entity[] {
   const mute    = ['  ']; // camels don't speak
   return [
     // Persians on Iran coastline (south edge near the strait)
-    mkEntity('🧔', T(20), T(14), persian),
-    mkEntity('🧔', T(38), T(11), persian),
+    mkEntity('🧔🏽', T(20), T(14), persian),
+    mkEntity('🧔🏽', T(38), T(11), persian),
     // Arabs on Oman coastline (north edge near the strait)
     mkEntity('👳', T(42), T(47), arab),
     mkEntity('👳', T(52), T(50), arab),
     // Camels on Iranian coastline
     mkEntity('🐪', T(12), T(9),  mute),
-    mkEntity('🐪', T(40), T(13), mute),
+    mkEntity('🐪', T(55), T(8),  mute),
     // Camel on Oman coastline
     mkEntity('🐪', T(47), T(52), mute),
   ];
