@@ -1,49 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Difficulty, DIFFICULTIES } from '../game/difficulty';
 import { MapName, MAP_LIST } from '../maps';
-
-interface HighScoreEntry {
-  playerName: string;
-  mapName: string;
-  difficulty: string;
-  score: number;
-  timeSeconds: number;
-  date: string;
-}
+import { getHighScores, HighScoreEntry } from '../highscores';
 
 interface HighScoresProps {
   onBack: () => void;
 }
 
 export function HighScores({ onBack }: HighScoresProps) {
-  const [scores, setScores] = useState<HighScoreEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [filterMap, setFilterMap] = useState<MapName | ''>('');
   const [filterDifficulty, setFilterDifficulty] = useState<Difficulty | ''>('');
 
-  useEffect(() => {
-    fetchScores();
-  }, [filterMap, filterDifficulty]);
-
-  const fetchScores = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const params = new URLSearchParams();
-      if (filterMap) params.set('map', filterMap);
-      if (filterDifficulty) params.set('difficulty', filterDifficulty);
-      const res = await fetch(`/api/highscores?${params}`);
-      if (!res.ok) throw new Error('Failed to fetch');
-      const data = await res.json();
-      setScores(data);
-    } catch {
-      setError('Could not load high scores. Backend may be unavailable.');
-      setScores([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const scores: HighScoreEntry[] = getHighScores(filterMap || undefined, filterDifficulty || undefined);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -85,10 +53,7 @@ export function HighScores({ onBack }: HighScoresProps) {
         </select>
       </div>
 
-      {loading && <p style={styles.message}>Loading...</p>}
-      {error && <p style={styles.error}>{error}</p>}
-
-      {!loading && !error && scores.length === 0 && (
+      {scores.length === 0 && (
         <p style={styles.message}>No scores yet. Be the first!</p>
       )}
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Difficulty } from '../game/difficulty';
 import { MapName, MAP_LIST } from '../maps';
+import { addHighScore } from '../highscores';
 
 interface GameResult {
   won: boolean;
@@ -29,27 +30,20 @@ export function GameOver({ result, onPlayAgain, onBackToMenu }: GameOverProps) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!playerName.trim()) return;
     setSubmitting(true);
-    setError('');
-
     try {
-      const res = await fetch('/api/highscores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          playerName: playerName.trim(),
-          mapName: result.mapName,
-          difficulty: result.difficulty,
-          score: result.score,
-          timeSeconds: result.timeSeconds,
-        }),
+      addHighScore({
+        playerName: playerName.trim(),
+        mapName: result.mapName,
+        difficulty: result.difficulty,
+        score: result.score,
+        timeSeconds: result.timeSeconds,
       });
-      if (!res.ok) throw new Error('Failed to submit score');
       setSubmitted(true);
     } catch {
-      setError('Could not submit score. Backend may be unavailable.');
+      setError('Could not save score.');
     } finally {
       setSubmitting(false);
     }
